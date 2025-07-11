@@ -10,7 +10,7 @@
         <div class="col-12">
             <div class="bg-gradient-info text-white rounded-3 p-4">
                 <h2 class="fw-bold mb-2">Farmer Community</h2>
-                <p class="mb-0">Connect, share, and learn from fellow farmers in your region and beyond.</p>
+                <p class="mb-0 text-white">Connect, share, and learn from fellow farmers in your region and beyond.</p>
             </div>
         </div>
     </div>
@@ -58,35 +58,84 @@
     <div class="row">
         <!-- Main Content -->
         <div class="col-lg-8">
-            <!-- Create Post -->
+            <!-- Create Post - Tweet-like Dialog -->
             {% if current_user.is_authenticated %}
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-pen me-2"></i>Share with Community</h5>
-                </div>
-                <div class="card-body">
-                    <form>
-                        <div class="mb-3">
-                            <input type="text" class="form-control" placeholder="What's on your mind about farming?">
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <select class="form-select">
-                                    <option>General Discussion</option>
-                                    <option>Crop Management</option>
-                                    <option>Pest Control</option>
-                                    <option>Weather Updates</option>
-                                    <option>Market Prices</option>
-                                    <option>Success Stories</option>
-                                </select>
+            <div class="tweet-composer mb-4">
+                <div class="composer-header">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="composer-content">
+                        <form id="postForm">
+                            <div class="composer-input">
+                                <textarea 
+                                    id="postText" 
+                                    class="form-control tweet-textarea" 
+                                    placeholder="What's happening in your farm today?" 
+                                    rows="3"
+                                    maxlength="280"></textarea>
+                                <div class="character-count">
+                                    <span id="charCount">280</span> characters remaining
+                                </div>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <button type="button" class="btn btn-success w-100">
-                                    <i class="fas fa-share me-2"></i>Share Post
+                            
+                            <!-- Tags Input -->
+                            <div class="tags-section mt-3">
+                                <div class="tags-input-container">
+                                    <input 
+                                        type="text" 
+                                        id="tagInput" 
+                                        class="form-control tags-input" 
+                                        placeholder="Add tags (e.g., #rice #irrigation #organic)"
+                                        autocomplete="off">
+                                    <div class="tags-suggestions" id="tagsSuggestions"></div>
+                                </div>
+                                <div class="selected-tags" id="selectedTags"></div>
+                            </div>
+                            
+                            <!-- Location and Category -->
+                            <div class="composer-options mt-3">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <select class="form-select category-select">
+                                            <option value="">Select Category</option>
+                                            <option value="crop-management">🌾 Crop Management</option>
+                                            <option value="pest-control">🐛 Pest Control</option>
+                                            <option value="weather">🌤️ Weather Updates</option>
+                                            <option value="market">💰 Market Prices</option>
+                                            <option value="success">🏆 Success Stories</option>
+                                            <option value="equipment">🚜 Equipment & Tools</option>
+                                            <option value="organic">🌱 Organic Farming</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="text" class="form-control location-input" placeholder="📍 Add location (optional)">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Action Buttons -->
+                            <div class="composer-actions mt-3">
+                                <div class="action-buttons">
+                                    <button type="button" class="action-btn" title="Add Photo">
+                                        <i class="fas fa-image"></i>
+                                    </button>
+                                    <button type="button" class="action-btn" title="Add Poll">
+                                        <i class="fas fa-poll"></i>
+                                    </button>
+                                    <button type="button" class="action-btn" title="Add Location">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                    </button>
+                                    <button type="button" class="action-btn" title="Schedule Post">
+                                        <i class="fas fa-clock"></i>
+                                    </button>
+                                </div>
+                                <button type="submit" class="btn btn-primary post-btn" disabled>
+                                    <i class="fas fa-paper-plane me-2"></i>Share
                                 </button>
                             </div>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
             {% endif %}
@@ -274,4 +323,6 @@
     </div>
     </div>
 </div>
+
+<script src="{{ url_for('static', filename='js/community.js') }}"></script>
 {% endblock %}
