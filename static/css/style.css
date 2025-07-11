@@ -1023,6 +1023,50 @@ p {
 .text-danger { color: #e74c3c !important; }
 .text-info { color: #3498db !important; }
 
+/* Footer Styling */
+footer {
+    background: var(--bg-card) !important;
+    border-top: 1px solid var(--border-dark) !important;
+}
+
+footer .border-top {
+    border-color: var(--border-dark) !important;
+}
+
+footer hr {
+    border-color: var(--border-dark) !important;
+    opacity: 0.3 !important;
+}
+
+/* Disease Detection Icons Color Update */
+.fa-bug.text-danger {
+    color: var(--sage-green) !important;
+}
+
+.fa-virus.text-success {
+    color: var(--accent-green) !important;
+}
+
+/* Disease detection specific red-to-green conversions */
+.text-danger {
+    color: var(--sage-green) !important;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, var(--primary-green), var(--secondary-green)) !important;
+    border: none !important;
+    color: var(--text-light) !important;
+}
+
+.btn-danger:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(45, 90, 61, 0.3) !important;
+}
+
+.bg-gradient-danger {
+    background: linear-gradient(135deg, var(--primary-green) 0%, var(--secondary-green) 100%) !important;
+}
+
 .message {
     margin-bottom: 1rem;
     animation: fadeIn 0.3s ease-in;
