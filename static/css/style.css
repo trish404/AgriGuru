@@ -16,6 +16,10 @@
     --shadow-primary: 0 10px 40px rgba(45, 90, 61, 0.3);
     --shadow-secondary: 0 5px 20px rgba(0, 0, 0, 0.4);
     --shadow-inset: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+    --muted-brown: #8b7355;
+    --dark-brown: #5d4e37;
+    --sage-green: #9caf88;
+    --olive-green: #6b7c32;
 }
 
 body {
@@ -278,18 +282,40 @@ body {
 }
 
 /* Navigation */
+.navbar {
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+    background: var(--bg-card) !important;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-dark);
+}
+
 .navbar-brand {
     font-size: 1.5rem;
     font-weight: 700;
+    color: var(--accent-green) !important;
 }
 
 .navbar-nav .nav-link {
+    color: var(--text-light) !important;
     font-weight: 500;
-    transition: color 0.3s ease;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    margin: 0 0.25rem;
+    padding: 0.5rem 1rem !important;
 }
 
 .navbar-nav .nav-link:hover {
-    color: var(--primary-green) !important;
+    color: var(--accent-green) !important;
+    background: rgba(107, 148, 120, 0.1);
+    transform: translateY(-1px);
+}
+
+.navbar-toggler {
+    border-color: var(--border-dark);
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28224, 224, 224, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
 }
 
 /* Chat Section */
@@ -297,6 +323,17 @@ body {
     padding: 4rem 0;
     background: var(--bg-dark);
     min-height: 60vh;
+}
+
+.chat-section .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.chat-section .col-lg-10 {
+    display: flex;
+    justify-content: center;
 }
 
 /* Modern Chat Interface */
@@ -634,6 +671,357 @@ body {
         max-width: 85%;
     }
 }
+
+/* Features Section */
+.features-section {
+    background: var(--bg-dark);
+    position: relative;
+}
+
+.features-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(ellipse at center, rgba(45, 90, 61, 0.05) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.feature-card {
+    background: linear-gradient(135deg, var(--bg-card) 0%, rgba(45, 90, 61, 0.1) 100%);
+    border: 1px solid var(--border-dark);
+    border-radius: 16px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-secondary);
+    backdrop-filter: blur(5px);
+}
+
+.feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(107, 148, 120, 0.1), transparent);
+    transition: left 0.6s ease;
+}
+
+.feature-card:hover::before {
+    left: 100%;
+}
+
+.feature-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 15px 40px rgba(45, 90, 61, 0.2);
+    border-color: var(--accent-green);
+}
+
+.feature-card:nth-child(odd) {
+    background: linear-gradient(135deg, var(--muted-brown) 0%, rgba(139, 115, 85, 0.1) 100%);
+}
+
+.feature-card:nth-child(even) {
+    background: linear-gradient(135deg, var(--sage-green) 0%, rgba(156, 175, 136, 0.1) 100%);
+}
+
+.feature-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--secondary-green), var(--accent-green));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 25px rgba(45, 90, 61, 0.3);
+}
+
+.feature-card:hover .feature-icon {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 12px 35px rgba(45, 90, 61, 0.4);
+}
+
+.feature-icon i {
+    font-size: 2rem;
+    color: var(--text-light);
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.feature-title {
+    color: var(--text-light);
+    font-weight: 700;
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+    transition: color 0.3s ease;
+}
+
+.feature-card:hover .feature-title {
+    color: var(--accent-green);
+}
+
+.feature-text {
+    color: var(--text-muted);
+    line-height: 1.6;
+    transition: color 0.3s ease;
+}
+
+.feature-card:hover .feature-text {
+    color: var(--text-light);
+}
+
+/* Loading Animation */
+@keyframes featureSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.feature-card {
+    animation: featureSlideUp 0.6s ease-out;
+    animation-fill-mode: both;
+}
+
+.feature-card:nth-child(1) { animation-delay: 0.1s; }
+.feature-card:nth-child(2) { animation-delay: 0.2s; }
+.feature-card:nth-child(3) { animation-delay: 0.3s; }
+.feature-card:nth-child(4) { animation-delay: 0.4s; }
+.feature-card:nth-child(5) { animation-delay: 0.5s; }
+.feature-card:nth-child(6) { animation-delay: 0.6s; }
+
+/* Global Card Styles for Community and Other Pages */
+.card, .bg-white {
+    background: linear-gradient(135deg, var(--bg-card) 0%, rgba(45, 90, 61, 0.1) 100%) !important;
+    border: 1px solid var(--border-dark) !important;
+    color: var(--text-light) !important;
+    transition: all 0.3s ease !important;
+    box-shadow: var(--shadow-secondary) !important;
+}
+
+.card:hover {
+    transform: translateY(-4px) !important;
+    box-shadow: 0 10px 30px rgba(45, 90, 61, 0.2) !important;
+    border-color: var(--accent-green) !important;
+}
+
+.card-header {
+    background: linear-gradient(135deg, var(--primary-green), var(--secondary-green)) !important;
+    border-bottom: 1px solid var(--border-dark) !important;
+    color: var(--text-light) !important;
+}
+
+.card-body {
+    background: transparent !important;
+    color: var(--text-light) !important;
+}
+
+.card-title {
+    color: var(--text-light) !important;
+}
+
+.card-text, .text-muted {
+    color: var(--text-muted) !important;
+}
+
+/* Form Styling */
+.form-control {
+    background: var(--bg-card) !important;
+    border: 1px solid var(--border-dark) !important;
+    color: var(--text-light) !important;
+    transition: all 0.3s ease !important;
+}
+
+.form-control:focus {
+    background: var(--bg-card) !important;
+    border-color: var(--accent-green) !important;
+    color: var(--text-light) !important;
+    box-shadow: 0 0 0 3px rgba(107, 148, 120, 0.2) !important;
+}
+
+.form-control::placeholder {
+    color: var(--text-muted) !important;
+}
+
+.form-label {
+    color: var(--text-light) !important;
+    font-weight: 600 !important;
+}
+
+/* Button Enhancements */
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-green), var(--secondary-green)) !important;
+    border: none !important;
+    transition: all 0.3s ease !important;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(45, 90, 61, 0.3) !important;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, var(--secondary-green), var(--accent-green)) !important;
+    border: none !important;
+    transition: all 0.3s ease !important;
+}
+
+.btn-success:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(74, 124, 89, 0.3) !important;
+}
+
+/* Alert Styling */
+.alert {
+    background: var(--bg-card) !important;
+    border: 1px solid var(--border-dark) !important;
+    color: var(--text-light) !important;
+}
+
+.alert-success {
+    border-left: 4px solid var(--accent-green) !important;
+}
+
+.alert-danger {
+    border-left: 4px solid #dc3545 !important;
+}
+
+.alert-info {
+    border-left: 4px solid #17a2b8 !important;
+}
+
+/* Community and Disease Detection Page Specific */
+.community-post, .detection-result {
+    background: linear-gradient(135deg, var(--muted-brown) 0%, rgba(139, 115, 85, 0.1) 100%) !important;
+    border: 1px solid var(--border-dark) !important;
+    border-radius: 12px !important;
+    padding: 1.5rem !important;
+    margin-bottom: 1.5rem !important;
+    transition: all 0.4s ease !important;
+    box-shadow: var(--shadow-secondary) !important;
+}
+
+.community-post:hover, .detection-result:hover {
+    transform: translateY(-4px) !important;
+    box-shadow: 0 12px 35px rgba(139, 115, 85, 0.3) !important;
+    border-color: var(--muted-brown) !important;
+}
+
+.post-meta, .detection-meta {
+    color: var(--text-muted) !important;
+    font-size: 0.9rem !important;
+}
+
+/* Background for main content areas */
+.container-fluid, .main-content {
+    background: var(--bg-dark) !important;
+}
+
+/* Breadcrumb styling */
+.breadcrumb {
+    background: transparent !important;
+}
+
+.breadcrumb-item a {
+    color: var(--accent-green) !important;
+}
+
+.breadcrumb-item.active {
+    color: var(--text-muted) !important;
+}
+
+/* Form Select and Dropdown Styling */
+.form-select {
+    background: var(--bg-card) !important;
+    border: 1px solid var(--border-dark) !important;
+    color: var(--text-light) !important;
+    transition: all 0.3s ease !important;
+}
+
+.form-select:focus {
+    background: var(--bg-card) !important;
+    border-color: var(--accent-green) !important;
+    color: var(--text-light) !important;
+    box-shadow: 0 0 0 3px rgba(107, 148, 120, 0.2) !important;
+}
+
+.dropdown-menu {
+    background: var(--bg-card) !important;
+    border: 1px solid var(--border-dark) !important;
+    box-shadow: var(--shadow-secondary) !important;
+}
+
+.dropdown-item {
+    color: var(--text-light) !important;
+    transition: all 0.3s ease !important;
+}
+
+.dropdown-item:hover {
+    background: rgba(107, 148, 120, 0.1) !important;
+    color: var(--accent-green) !important;
+}
+
+.dropdown-divider {
+    border-color: var(--border-dark) !important;
+}
+
+/* Upload Zone Styling */
+.upload-zone {
+    background: var(--bg-card) !important;
+    border: 2px dashed var(--border-dark) !important;
+    color: var(--text-muted) !important;
+    transition: all 0.3s ease !important;
+}
+
+.upload-zone:hover {
+    border-color: var(--accent-green) !important;
+    background: rgba(107, 148, 120, 0.05) !important;
+}
+
+/* List Group Styling */
+.list-group-item {
+    background: var(--bg-card) !important;
+    border: 1px solid var(--border-dark) !important;
+    color: var(--text-light) !important;
+    transition: all 0.3s ease !important;
+}
+
+.list-group-item:hover {
+    background: rgba(107, 148, 120, 0.1) !important;
+    transform: translateX(5px) !important;
+}
+
+/* Page Background */
+body, .container, .container-fluid {
+    background: var(--bg-dark) !important;
+}
+
+/* Text Color Overrides */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-light) !important;
+}
+
+p {
+    color: var(--text-muted) !important;
+}
+
+/* Icon color enhancements */
+.text-primary { color: var(--accent-green) !important; }
+.text-success { color: var(--sage-green) !important; }
+.text-warning { color: var(--muted-brown) !important; }
+.text-danger { color: #e74c3c !important; }
+.text-info { color: #3498db !important; }
 
 .message {
     margin-bottom: 1rem;
