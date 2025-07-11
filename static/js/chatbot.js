@@ -4,6 +4,8 @@ class AgriGuruChatbot {
         this.chatMessages = document.getElementById('chatMessages');
         this.messageInput = document.getElementById('messageInput');
         this.sendBtn = document.getElementById('sendBtn');
+        this.voiceBtn = document.getElementById('voiceBtn');
+        this.mainVoiceBtn = document.getElementById('mainVoiceBtn');
         this.languageSelect = document.getElementById('languageSelect');
         this.isLoading = false;
         
@@ -27,6 +29,30 @@ class AgriGuruChatbot {
         this.languageSelect.addEventListener('change', () => {
             this.handleLanguageChange();
         });
+        
+        // Voice button functionality for chat interface
+        if (this.voiceBtn && window.VoiceRecognition) {
+            const voiceRecognition = new VoiceRecognition();
+            this.voiceBtn.addEventListener('click', () => {
+                voiceRecognition.toggleRecording();
+            });
+        }
+        
+        // Main voice button functionality for hero section
+        if (this.mainVoiceBtn && window.VoiceRecognition) {
+            const voiceRecognition = new VoiceRecognition();
+            this.mainVoiceBtn.addEventListener('click', () => {
+                // Scroll to chat section
+                document.querySelector('.chat-section').scrollIntoView({ 
+                    behavior: 'smooth' 
+                });
+                
+                // Start voice recognition after scroll
+                setTimeout(() => {
+                    voiceRecognition.toggleRecording();
+                }, 500);
+            });
+        }
     }
     
     async sendMessage(isVoice = false) {
@@ -80,38 +106,37 @@ class AgriGuruChatbot {
         
         const currentTime = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         
+        const messageWrapper = document.createElement('div');
+        messageWrapper.className = `message-wrapper ${type}`;
+        
         if (type === 'user') {
-            messageDiv.innerHTML = `
-                <div class="d-flex align-items-start justify-content-end">
-                    <div class="message-content">
-                        <div class="bg-primary text-white rounded-3 p-3 shadow-sm">
-                            <p class="mb-0">${content}</p>
-                            ${isVoice ? '<small class="opacity-75"><i class="fas fa-microphone me-1"></i>Voice</small>' : ''}
-                        </div>
-                        <small class="text-muted">${currentTime}</small>
+            messageWrapper.innerHTML = `
+                <div class="message-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="message-content">
+                    <div class="message-bubble user-bubble">
+                        <p class="mb-0">${content}</p>
+                        ${isVoice ? '<small class="opacity-75 d-block mt-1"><i class="fas fa-microphone me-1"></i>Voice</small>' : ''}
                     </div>
-                    <div class="avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center ms-3" style="width: 40px; height: 40px;">
-                        <i class="fas fa-user"></i>
-                    </div>
+                    <div class="message-time">${currentTime}</div>
                 </div>
             `;
         } else {
-            messageDiv.innerHTML = `
-                <div class="d-flex align-items-start">
-                    <div class="avatar bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
-                        <i class="fas fa-robot"></i>
+            messageWrapper.innerHTML = `
+                <div class="message-avatar">
+                    <i class="fas fa-seedling"></i>
+                </div>
+                <div class="message-content">
+                    <div class="message-bubble bot-bubble">
+                        <p class="mb-0">${content}</p>
                     </div>
-                    <div class="message-content">
-                        <div class="bg-white border rounded-3 p-3 shadow-sm">
-                            <p class="mb-0">${content}</p>
-                        </div>
-                        <small class="text-muted">${currentTime}</small>
-                    </div>
+                    <div class="message-time">${currentTime}</div>
                 </div>
             `;
         }
         
-        this.chatMessages.appendChild(messageDiv);
+        this.chatMessages.appendChild(messageWrapper);
         this.scrollToBottom();
     }
     
