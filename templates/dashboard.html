@@ -1,0 +1,306 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - AgriGuru{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Welcome Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="bg-gradient-success text-white rounded-3 p-4">
+                <h2 class="fw-bold mb-2">Welcome back, {{ current_user.username }}!</h2>
+                <p class="mb-0">
+                    <i class="fas fa-map-marker-alt me-2"></i>{{ current_user.farm_location or 'Location not set' }}
+                    {% if current_user.farm_size %}
+                    <span class="ms-3"><i class="fas fa-expand-arrows-alt me-2"></i>{{ current_user.farm_size }}</span>
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title">Weather</h6>
+                            <h4>{{ weather_data.current.temperature }}°C</h4>
+                            <small>{{ weather_data.current.description.title() }}</small>
+                        </div>
+                        <i class="fas fa-cloud-sun fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title">Farm Records</h6>
+                            <h4>{{ recent_records|length }}</h4>
+                            <small>Recent entries</small>
+                        </div>
+                        <i class="fas fa-clipboard-list fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title">Recommendations</h6>
+                            <h4>{{ crop_recommendations|length }}</h4>
+                            <small>New suggestions</small>
+                        </div>
+                        <i class="fas fa-lightbulb fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title">Humidity</h6>
+                            <h4>{{ weather_data.current.humidity }}%</h4>
+                            <small>Current level</small>
+                        </div>
+                        <i class="fas fa-tint fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="row">
+        <!-- Left Column -->
+        <div class="col-lg-8">
+            <!-- Weather Forecast -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-cloud-sun me-2"></i>Weather Forecast</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for day in weather_data.forecast %}
+                        <div class="col-md-4 text-center">
+                            <div class="weather-day p-3 border rounded">
+                                <h6 class="fw-bold">{{ day.date }}</h6>
+                                <i class="fas fa-sun text-warning fa-2x mb-2"></i>
+                                <p class="mb-1"><strong>{{ day.temp_high }}° / {{ day.temp_low }}°</strong></p>
+                                <small class="text-muted">{{ day.description.title() }}</small>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Crop Recommendations -->
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-seedling me-2"></i>Crop Recommendations</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for rec in crop_recommendations %}
+                        <div class="col-md-6 mb-3">
+                            <div class="border rounded p-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h6 class="fw-bold mb-0">{{ rec.crop }}</h6>
+                                    <span class="badge bg-success">{{ rec.suitability }}% suitable</span>
+                                </div>
+                                <p class="text-muted mb-2">Season: {{ rec.season }}</p>
+                                <p class="text-muted mb-2">Expected yield: {{ rec.expected_yield }}</p>
+                                <div class="progress mb-2" style="height: 6px;">
+                                    <div class="progress-bar bg-success" style="width: {{ rec.suitability }}%"></div>
+                                </div>
+                                <small class="text-muted">
+                                    Reasons: {{ rec.reasons|join(', ') }}
+                                </small>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Price Analytics Chart -->
+            <div class="card mb-4">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Price Trends</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="priceChart" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-lg-4">
+            <!-- Quick Actions -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('disease_detection') }}" class="btn btn-outline-danger">
+                            <i class="fas fa-microscope me-2"></i>Disease Detection
+                        </a>
+                        <button class="btn btn-outline-primary" onclick="openWeatherModal()">
+                            <i class="fas fa-cloud-rain me-2"></i>Detailed Weather
+                        </button>
+                        <button class="btn btn-outline-success" onclick="addFarmRecord()">
+                            <i class="fas fa-plus me-2"></i>Add Farm Record
+                        </button>
+                        <a href="{{ url_for('community') }}" class="btn btn-outline-info">
+                            <i class="fas fa-users me-2"></i>Community Forum
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Farm Records -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-clipboard-list me-2"></i>Recent Records</h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_records %}
+                        {% for record in recent_records %}
+                        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                            <div>
+                                <h6 class="mb-1">{{ record.record_type.title() }}</h6>
+                                <small class="text-muted">{{ record.crop_name or 'General' }}</small>
+                            </div>
+                            <small class="text-muted">{{ record.date_recorded.strftime('%m/%d') }}</small>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted text-center">No records yet. Start tracking your farm activities!</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Market Alerts -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-bell me-2"></i>Market Alerts</h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info" role="alert">
+                        <i class="fas fa-arrow-up me-2"></i>
+                        <strong>Rice prices</strong> expected to rise by 8% next month
+                    </div>
+                    <div class="alert alert-warning" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Wheat demand</strong> is increasing in your region
+                    </div>
+                    <div class="alert alert-success" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <strong>Cotton subsidy</strong> applications are now open
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Farm Record Modal -->
+<div class="modal fade" id="addRecordModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Farm Record</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label class="form-label">Record Type</label>
+                        <select class="form-select">
+                            <option>Planting</option>
+                            <option>Fertilization</option>
+                            <option>Irrigation</option>
+                            <option>Harvest</option>
+                            <option>Disease Treatment</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Crop</label>
+                        <input type="text" class="form-control" placeholder="Enter crop name">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" rows="3" placeholder="Enter details..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success">Save Record</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script>
+    // Initialize price chart
+    const ctx = document.getElementById('priceChart').getContext('2d');
+    const priceChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'],
+            datasets: [{
+                label: 'Rice Price (₹/quintal)',
+                data: [2400, 2450, 2420, 2480, 2500, 2520, 2550],
+                borderColor: 'rgb(75, 192, 192)',
+                backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                tension: 0.4
+            }, {
+                label: 'Wheat Price (₹/quintal)',
+                data: [2200, 2180, 2220, 2250, 2280, 2300, 2320],
+                borderColor: 'rgb(255, 159, 64)',
+                backgroundColor: 'rgba(255, 159, 64, 0.1)',
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: false
+                }
+            }
+        }
+    });
+
+    function openWeatherModal() {
+        alert('Detailed weather feature coming soon!');
+    }
+
+    function addFarmRecord() {
+        new bootstrap.Modal(document.getElementById('addRecordModal')).show();
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+
+{% block title %}Disease Detection - AgriGuru{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="bg-gradient-danger text-white rounded-3 p-4">
+                <h2 class="fw-bold mb-2">AI Disease Detection</h2>
+                <p class="mb-0">Upload images of your crops to get instant disease diagnosis and treatment recommendations.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Upload Section -->
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-camera me-2"></i>Upload Crop Image</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="mb-4">
+                            <div class="upload-zone border-dashed border-2 border-secondary rounded-3 p-4 text-center" style="min-height: 200px; cursor: pointer;" onclick="document.getElementById('fileInput').click()">
+                                <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
+                                <h5 class="text-muted">Drag & drop your image here</h5>
+                                <p class="text-muted mb-3">or click to browse files</p>
+                                <input type="file" id="fileInput" name="file" accept="image/*" class="d-none" onchange="previewImage(this)">
+                                <div id="imagePreview" class="mt-3"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Crop Type (Optional)</label>
+                            <select class="form-select">
+                                <option>Select crop type</option>
+                                <option>Rice</option>
+                                <option>Wheat</option>
+                                <option>Cotton</option>
+                                <option>Sugarcane</option>
+                                <option>Maize</option>
+                                <option>Tomato</option>
+                                <option>Potato</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-danger btn-lg">
+                                <i class="fas fa-microscope me-2"></i>Analyze Disease
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instructions & Tips -->
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Photography Tips</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li class="mb-3">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <strong>Good Lighting:</strong> Take photos in natural daylight for best results
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <strong>Clear Focus:</strong> Ensure the affected area is in sharp focus
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <strong>Close-up View:</strong> Fill the frame with the diseased part of the plant
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <strong>Multiple Angles:</strong> Take photos from different angles if possible
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <strong>Clean Background:</strong> Avoid cluttered backgrounds
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Supported Formats</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-3">
+                            <i class="fas fa-file-image fa-2x text-primary mb-2"></i>
+                            <p class="mb-0 small">JPG</p>
+                        </div>
+                        <div class="col-3">
+                            <i class="fas fa-file-image fa-2x text-primary mb-2"></i>
+                            <p class="mb-0 small">PNG</p>
+                        </div>
+                        <div class="col-3">
+                            <i class="fas fa-file-image fa-2x text-primary mb-2"></i>
+                            <p class="mb-0 small">JPEG</p>
+                        </div>
+                        <div class="col-3">
+                            <i class="fas fa-file-image fa-2x text-primary mb-2"></i>
+                            <p class="mb-0 small">GIF</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <p class="mb-0 text-muted small">Maximum file size: 16MB</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detection Result -->
+    {% if result %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0"><i class="fas fa-microscope me-2"></i>Disease Detection Result</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4 class="text-danger fw-bold mb-3">{{ result.disease }}</h4>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Confidence Score:</label>
+                                <div class="progress mb-2">
+                                    <div class="progress-bar bg-danger" style="width: {{ result.confidence }}%"></div>
+                                </div>
+                                <span class="text-muted">{{ "%.1f"|format(result.confidence) }}% confidence</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold mb-3">Treatment Recommendations:</h6>
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                {{ result.recommendations }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Common Diseases -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3 class="fw-bold mb-4">Common Crop Diseases</h3>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <i class="fas fa-leaf text-warning fa-3x mb-3"></i>
+                            <h5 class="fw-bold">Leaf Blight</h5>
+                            <p class="text-muted">Brown spots on leaves, rapid spreading in humid conditions</p>
+                            <button class="btn btn-outline-primary btn-sm">Learn More</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <i class="fas fa-bug text-danger fa-3x mb-3"></i>
+                            <h5 class="fw-bold">Powdery Mildew</h5>
+                            <p class="text-muted">White powdery substance on plant surfaces</p>
+                            <button class="btn btn-outline-primary btn-sm">Learn More</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <i class="fas fa-virus text-success fa-3x mb-3"></i>
+                            <h5 class="fw-bold">Bacterial Spot</h5>
+                            <p class="text-muted">Small dark spots with yellow halos on leaves</p>
+                            <button class="btn btn-outline-primary btn-sm">Learn More</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function previewImage(input) {
+    const preview = document.getElementById('imagePreview');
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.innerHTML = `
+                <img src="${e.target.result}" class="img-fluid rounded" style="max-height: 200px;">
+                <p class="mt-2 text-success"><i class="fas fa-check me-1"></i>Image selected: ${input.files[0].name}</p>
+            `;
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+// Drag and drop functionality
+const uploadZone = document.querySelector('.upload-zone');
+const fileInput = document.getElementById('fileInput');
+
+uploadZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    uploadZone.classList.add('border-primary');
+});
+
+uploadZone.addEventListener('dragleave', (e) => {
+    e.preventDefault();
+    uploadZone.classList.remove('border-primary');
+});
+
+uploadZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    uploadZone.classList.remove('border-primary');
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+        fileInput.files = files;
+        previewImage(fileInput);
+    }
+});
+</script>
+{% endblock %}
