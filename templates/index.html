@@ -1,183 +1,182 @@
-{% extends "base.html" %}
-
-{% block content %}
-<!-- Hero Section with Voice Interface -->
-<section class="hero-section-new">
-    <div class="hero-background">
-        <div class="container">
-            <div class="hero-content text-center">
-                <!-- Main Voice Interface -->
-                <div class="voice-interface-container">
-                    <div class="voice-circle-container">
-                        <div class="voice-outer-ring"></div>
-                        <div class="voice-middle-ring"></div>
-                        <div class="voice-inner-circle" id="mainVoiceBtn">
-                            <i class="fas fa-microphone"></i>
-                        </div>
-                        <div class="voice-pulse"></div>
-                    </div>
-                </div>
-                
-                <!-- Title and Subtitle -->
-                <div class="hero-text">
-                    <h1 class="hero-title">Chat with AgriGuru AI</h1>
-                    <p class="hero-subtitle">Your intelligent farming assistant powered by AI. Speak or type to get instant crop recommendations, weather forecasts, and market insights.</p>
-                </div>
-                
-                <!-- Language Selection -->
-                <div class="language-selector">
-                    <select id="languageSelect" class="language-select">
-                        <option value="en">English</option>
-                        <option value="hi">हिंदी (Hindi)</option>
-                        <option value="te">తెలుగు (Telugu)</option>
-                        <option value="ta">தமிழ் (Tamil)</option>
-                    </select>
-                </div>
-                
-                <!-- Auth buttons -->
-                <div class="auth-buttons">
-                    {% if not current_user.is_authenticated %}
-                    <a href="{{ url_for('login') }}" class="auth-btn login-btn">
-                        <i class="fas fa-sign-in-alt me-2"></i>Login
-                    </a>
-                    <a href="{{ url_for('register') }}" class="auth-btn register-btn">
-                        <i class="fas fa-user-plus me-2"></i>Sign Up
-                    </a>
-                    {% else %}
-                    <a href="{{ url_for('dashboard') }}" class="auth-btn dashboard-btn">
-                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
-                    </a>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AgriChat Sage</title>
+  <style>
+    body {
+      margin: 0;
+      background: #f1f3f6;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    .chat-container {
+      background: #fff;
+      width: 400px;
+      height: 600px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .header {
+      background: #4CAF50;
+      color: white;
+      padding: 15px;
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+    }
+    .messages {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .message {
+      max-width: 80%;
+      margin-bottom: 10px;
+      padding: 10px 15px;
+      border-radius: 20px;
+      line-height: 1.4;
+      word-wrap: break-word;
+      white-space: pre-wrap;
+    }
+    .user {
+      align-self: flex-end;
+      background: #DCF8C6;
+    }
+    .assistant {
+      align-self: flex-start;
+      background: #f0f0f0;
+    }
+    .input-area {
+      display: flex;
+      border-top: 1px solid #ddd;
+    }
+    input[type="text"] {
+      flex: 1;
+      padding: 15px;
+      border: none;
+      outline: none;
+      font-size: 15px;
+    }
+    button {
+      border: none;
+      background: #4CAF50;
+      color: white;
+      padding: 0 20px;
+      cursor: pointer;
+      font-size: 15px;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="header">🌿 AgriChat Sage</div>
+    <div class="messages" id="messages">
+      <div class="message assistant">
+        Hello! I'm AgriGuru. Ask me anything about farming!
+      </div>
     </div>
-</section>
-
-<!-- Chat Interface Section -->
-<section class="chat-section">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-10 col-xl-8">
-                <!-- Chat Interface -->
-                <div class="chat-container-modern">
-                    <div class="chat-header-modern">
-                        <div class="chat-status">
-                            <div class="status-indicator online"></div>
-                            <span>AgriGuru AI Assistant</span>
-                        </div>
-                        <div class="chat-controls">
-                            <button class="control-btn" title="Voice Input" id="voiceBtn">
-                                <i class="fas fa-microphone"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="chat-messages-modern" id="chatMessages">
-                        <div class="message bot-message">
-                            <div class="message-wrapper">
-                                <div class="message-avatar">
-                                    <i class="fas fa-seedling"></i>
-                                </div>
-                                <div class="message-content">
-                                    <div class="message-bubble bot-bubble">
-                                        <p>Hello! I'm AgriGuru, your intelligent farming assistant. I can help you with crop recommendations, weather updates, market prices, disease detection, and government schemes. How can I assist you today?</p>
-                                    </div>
-                                    <div class="message-time">Just now</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="chat-input-modern">
-                        <div class="input-wrapper">
-                            <input type="text" id="messageInput" class="message-input" placeholder="Ask me anything about farming..." aria-label="Message">
-                            <button class="send-btn" type="button" id="sendBtn">
-                                <i class="fas fa-paper-plane"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="input-area">
+      <input type="text" id="input" placeholder="Type your message..." />
+      <button onclick="sendText()">➤</button>
+      <button onclick="startVoiceCall()">🎤</button>
     </div>
-</section>
+  </div>
 
-<!-- Features Section -->
-<section class="features-section py-5">
-    <div class="container">
-        <div class="text-center mb-5">
-            <h2 class="fw-bold text-light">AgriGuru Features</h2>
-            <p class="text-muted">Comprehensive agricultural solutions powered by AI and real-time data</p>
-        </div>
-        
-        <div class="row g-4">
-            <div class="col-md-6 col-lg-4">
-                <div class="feature-card h-100">
-                    <div class="feature-icon">
-                        <i class="fas fa-seedling"></i>
-                    </div>
-                    <h5 class="feature-title">Crop Recommendations</h5>
-                    <p class="feature-text">Get AI-powered crop suggestions based on your soil, climate, and market conditions for optimal yields.</p>
-                </div>
-            </div>
-            
-            <div class="col-md-6 col-lg-4">
-                <div class="feature-card h-100">
-                    <div class="feature-icon">
-                        <i class="fas fa-cloud-sun"></i>
-                    </div>
-                    <h5 class="feature-title">Weather Forecasting</h5>
-                    <p class="feature-text">Access real-time weather data and forecasts to plan your farming activities effectively.</p>
-                </div>
-            </div>
-            
-            <div class="col-md-6 col-lg-4">
-                <div class="feature-card h-100">
-                    <div class="feature-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <h5 class="feature-title">Market Analytics</h5>
-                    <p class="feature-text">Track crop prices, market trends, and get predictions to maximize your profits.</p>
-                </div>
-            </div>
-            
-            <div class="col-md-6 col-lg-4">
-                <div class="feature-card h-100">
-                    <div class="feature-icon">
-                        <i class="fas fa-microscope"></i>
-                    </div>
-                    <h5 class="feature-title">Disease Detection</h5>
-                    <p class="feature-text">Upload crop images for instant disease diagnosis and treatment recommendations.</p>
-                </div>
-            </div>
-            
-            <div class="col-md-6 col-lg-4">
-                <div class="feature-card h-100">
-                    <div class="feature-icon">
-                        <i class="fas fa-microphone"></i>
-                    </div>
-                    <h5 class="feature-title">Voice Assistant</h5>
-                    <p class="feature-text">Interact with AgriGuru using voice commands in multiple local languages.</p>
-                </div>
-            </div>
-            
-            <div class="col-md-6 col-lg-4">
-                <div class="feature-card h-100">
-                    <div class="feature-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <h5 class="feature-title">Community</h5>
-                    <p class="feature-text">Connect with fellow farmers, share experiences, and learn from the community.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+  <script>
+    const API_KEY = "cf036d10-90a1-4f96-9516-35606b8e9028";
+    const ASSISTANT_ID = "d6083701-47c4-4cb3-a08b-df7024d33aee";
+    let chatId = null;
+    let ws = null;
 
-{% endblock %}
+    async function sendText() {
+      const input = document.getElementById("input");
+      const text = input.value.trim();
+      if (!text) return;
 
-{% block extra_scripts %}
-<script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
-<script src="{{ url_for('static', filename='js/voice.js') }}"></script>
-{% endblock %}
+      appendMessage("user", text);
+      input.value = "";
+
+      try {
+        const res = await fetch("https://api.vapi.ai/chat", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${API_KEY}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            assistantId: ASSISTANT_ID,
+            input: text,
+            ...(chatId && { previousChatId: chatId })
+          })
+        });
+
+        const data = await res.json();
+        chatId = data.id;
+
+        let reply = data.output[0]?.content || "Sorry, I didn't get that.";
+        reply = cleanText(reply);
+        appendMessage("assistant", reply);
+      } catch (err) {
+        console.error(err);
+        appendMessage("assistant", "Error contacting AI assistant.");
+      }
+    }
+
+    function appendMessage(role, text) {
+      const messages = document.getElementById("messages");
+      const div = document.createElement("div");
+      div.className = `message ${role}`;
+      div.textContent = text;
+      messages.appendChild(div);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function cleanText(text) {
+      return text.replace(/\*/g, "").trim();
+    }
+
+    function startVoiceCall() {
+      if (ws) ws.close();
+
+      ws = new WebSocket(`wss://api.vapi.ai/calls/socket?assistantId=${ASSISTANT_ID}&apiKey=${API_KEY}`);
+
+      ws.onopen = () => {
+        appendMessage("assistant", "🎤 Voice call started. Speak into your microphone.");
+      };
+
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (data.type === "transcript") {
+          appendMessage("user", data.transcript);
+        }
+        if (data.type === "assistantResponse") {
+          let reply = cleanText(data.text || "");
+          appendMessage("assistant", reply);
+        }
+      };
+
+      ws.onclose = () => {
+        appendMessage("assistant", "Voice call ended.");
+      };
+
+      ws.onerror = (err) => {
+        console.error("WebSocket error:", err);
+        appendMessage("assistant", "Voice call error.");
+      };
+    }
+  </script>
+</body>
+</html>
